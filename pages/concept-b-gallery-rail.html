@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DMA Membership — Concept B "Gallery Rail"</title>
+<style>
+:root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --deep: #1e1646;
+    --purple: #594c9f;
+    --lblue: #a0d8e7;
+    --lav: #ddcbe4;
+    --teal: #275e71;
+    --red: #f04c40;
+    --gold: #ef9e32;
+
+    --canvas: #f7f3f9;
+    --field: #ffffff;
+    --line: #ddd4e7;
+    --line-strong: #b9acd0;
+    --muted: #6f6894;
+    --red-text: #c2372d;
+    --deep-2: #2a1f5c;
+
+    --f-display: "Grako", "Oswald", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --f-logo: "Visby CF", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "DIN 2014", "DIN Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    --r: 10px;
+    --ring: 0 0 0 4px rgba(89, 76, 159, .2);
+    --ease: cubic-bezier(.2, .7, .2, 1);
+
+    --bar-bg: #ffffff; --bar-text: #3a3550; --bar-border: #d9d5e3;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bar-bg: #221e3a; --bar-text: #e3def5; --bar-border: #3a3458; }
+}
+:root[data-theme="dark"] { --bar-bg: #221e3a; --bar-text: #e3def5; --bar-border: #3a3458; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--canvas); color: var(--deep); font-family: var(--f-body); -webkit-font-smoothing: antialiased; }
+button { font: inherit; }
+
+/* ---------- Review toolbar (preview only) ---------- */
+.review-bar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 60;
+    display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem;
+    padding: .625rem 1rem; background: var(--bar-bg); color: var(--bar-text);
+    border-bottom: 1px solid var(--bar-border); font-size: .8125rem;
+}
+.review-bar strong { margin-right: auto; }
+.review-btn { padding: .375rem .75rem; border: 1px solid var(--bar-border); border-radius: 999px; background: transparent; color: inherit; cursor: pointer; }
+.review-btn[aria-pressed="true"] { background: var(--purple); border-color: var(--purple); color: #fff; }
+.review-btn:focus-visible { outline: 2px solid var(--lblue); outline-offset: 2px; }
+
+.stage.is-mobile { padding: 2rem 1rem 4rem; }
+.frame { container-type: inline-size; margin: 0 auto; }
+.stage.is-mobile .frame { max-width: 390px; border-radius: 28px; overflow: hidden; outline: 1px solid var(--bar-border); box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+
+/* ======================= CONCEPT B ======================= */
+.app { display: grid; grid-template-columns: minmax(360px, 42%) 1fr; min-height: calc(100vh - 48px); background: var(--canvas); }
+
+/* ---- Brand rail (the one bold thing) ---- */
+.rail {
+    position: sticky; top: 48px; align-self: start;
+    height: calc(100vh - 48px); min-height: 640px;
+    display: flex; flex-direction: column;
+    padding: 2.25rem 3rem 2rem;
+    overflow: hidden;
+    background: var(--deep);
+    color: #fff;
+    isolation: isolate;
+}
+.rail-lattice { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; opacity: .55; }
+.rail::after {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background:
+        linear-gradient(180deg, rgba(30,22,70,.15) 0%, rgba(30,22,70,.85) 38%, var(--deep) 62%),
+        radial-gradient(circle at 100% 0, rgba(160,216,231,.25), rgba(160,216,231,0) 45%);
+}
+.rail-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.wordmark { font-family: var(--f-logo); font-weight: 800; font-size: 1.125rem; line-height: 1.02; letter-spacing: 0; color: #fff; text-decoration: none; }
+.wordmark small { display: block; font-size: .75rem; color: var(--lblue); }
+.ph { padding: .125rem .5rem; border: 1px dashed rgba(221,203,228,.5); border-radius: 4px; font-size: .6875rem; color: var(--lav); }
+
+.headline { margin: auto 0 0; padding-top: 3rem; font-family: var(--f-display); font-weight: 400; text-transform: uppercase; line-height: .88; font-size: clamp(3rem, 5.6vw, 5.25rem); }
+.headline span { display: block; }
+.headline .l2 { color: var(--lblue); }
+.headline .l3 { -webkit-text-stroke: 1.5px var(--lav); color: transparent; }
+.rail-lede { max-width: 26rem; margin: 1.25rem 0 0; font-size: 1rem; line-height: 1.55; color: rgba(255,255,255,.82); }
+
+/* step rail */
+.steps { margin: 2.5rem 0 0; padding: 0; list-style: none; counter-reset: s; }
+.steps li { position: relative; display: flex; align-items: center; gap: .875rem; padding: .4rem 0; font-weight: 700; font-size: .9375rem; color: rgba(221,203,228,.6); transition: color .25s var(--ease); }
+.steps li + li::before { content: ""; position: absolute; left: 13px; top: -10px; width: 2px; height: 14px; background: rgba(221,203,228,.25); }
+.steps li.is-done + li::before, .steps li.is-done::before { background: var(--lblue); }
+.dot { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 2px solid rgba(221,203,228,.4); border-radius: 50%; font-family: var(--f-logo); font-weight: 800; font-size: .8125rem; transition: all .25s var(--ease); }
+.steps li.is-current { color: #fff; }
+.steps li.is-current .dot { border-color: var(--gold); background: var(--gold); color: var(--deep); box-shadow: 0 0 0 5px rgba(239,158,50,.2); }
+.steps li.is-done { color: var(--lav); }
+.steps li.is-done .dot { border-color: var(--lblue); background: var(--lblue); color: var(--deep); }
+.steps button { all: unset; cursor: pointer; }
+.steps button:focus-visible { outline: 2px solid var(--lblue); outline-offset: 4px; border-radius: 4px; }
+
+.rail-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 2.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(221,203,228,.2); font-size: .75rem; color: var(--lav); }
+.rail-foot b { display: block; font-family: var(--f-logo); font-size: .9375rem; color: #fff; }
+.social { display: flex; gap: .375rem; }
+.social a { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; }
+.social a:hover { background: var(--purple); }
+.social a:focus-visible { outline: 2px solid var(--lblue); outline-offset: 2px; }
+.social svg { width: 15px; height: 15px; }
+
+/* ---- Form pane ---- */
+.pane { display: flex; flex-direction: column; min-width: 0; padding: 2.5rem 4rem 3rem; }
+.progress { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; font-size: .8125rem; font-weight: 700; color: var(--muted); }
+.progress-track { flex: 1; height: 6px; border-radius: 3px; background: #e9e1f0; overflow: hidden; }
+.progress-fill { height: 100%; width: 20%; border-radius: 3px; background: linear-gradient(90deg, var(--purple), var(--lblue)); transition: width .45s var(--ease); }
+
+.step { display: none; max-width: 640px; }
+.step.is-active { display: block; animation: enter .45s var(--ease); }
+@keyframes enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+.kicker { margin: 0 0 .5rem; font-family: var(--f-logo); font-weight: 800; font-size: .9375rem; color: var(--purple); }
+.step-title { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 3rem; line-height: .95; text-transform: uppercase; color: var(--deep); }
+.step-lede { margin: .75rem 0 2rem; max-width: 34rem; font-size: 1rem; line-height: 1.5; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.25rem; }
+.grid-addr { display: grid; grid-template-columns: 2fr 1fr 1fr; column-gap: 1.25rem; }
+.span { grid-column: 1 / -1; }
+.sub { margin: 1.75rem 0 1rem; font-family: var(--f-display); font-weight: 400; font-size: 1.375rem; text-transform: uppercase; color: var(--purple); }
+
+.field { margin-bottom: 1.25rem; }
+.field label { display: block; margin-bottom: .4rem; font-weight: 700; font-size: .8125rem; }
+.req { color: var(--red); margin-left: 2px; }
+.opt { margin-left: .375rem; font-weight: 400; color: var(--muted); }
+.input, .select {
+    display: block; width: 100%; height: 3.25rem; padding: 0 1rem;
+    border: 0; border-bottom: 2px solid var(--line-strong); border-radius: var(--r) var(--r) 0 0;
+    background: var(--field); color: var(--deep); font-size: 1rem;
+    box-shadow: inset 0 0 0 1px var(--line);
+    transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.select { appearance: none; padding-right: 2.5rem; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23594c9f' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; }
+.input:hover, .select:hover { box-shadow: inset 0 0 0 1px var(--line-strong); }
+.input:focus, .select:focus { outline: none; border-bottom-color: var(--purple); box-shadow: inset 0 0 0 1px var(--purple), var(--ring); }
+.input::placeholder { color: var(--muted); }
+.err { display: none; margin-top: .375rem; font-size: .8125rem; font-weight: 700; color: var(--red-text); }
+.field.is-invalid .input, .field.is-invalid .select { border-bottom-color: var(--red); box-shadow: inset 0 0 0 1px var(--red), 0 0 0 4px rgba(240,76,64,.12); }
+.field.is-invalid .err { display: block; }
+.help { display: flex; gap: .5rem; margin: .5rem 0 0; font-size: .8125rem; line-height: 1.4; color: var(--teal); }
+.help::before { content: "i"; flex: none; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; margin-top: 1px; border-radius: 50%; background: var(--teal); color: #fff; font-size: .6875rem; font-weight: 700; font-style: italic; }
+
+.switch { display: inline-flex; align-items: center; gap: .75rem; margin: 0 0 1.25rem; padding: .625rem 1rem .625rem .75rem; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-weight: 700; font-size: .875rem; color: var(--purple); cursor: pointer; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.track { position: relative; width: 40px; height: 22px; border-radius: 11px; background: var(--lav); transition: background-color .2s var(--ease); }
+.track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(30,22,70,.3); transition: transform .2s var(--ease); }
+.switch input:checked + .track { background: var(--purple); }
+.switch input:checked + .track::after { transform: translateX(18px); }
+.switch input:focus-visible + .track { box-shadow: var(--ring); }
+.mail-block { transition: opacity .25s var(--ease); }
+.mail-block.is-same { opacity: .45; }
+
+/* ---- Tier cards (badge colors from brand guide) ---- */
+.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
+.tier { position: relative; display: flex; flex-direction: column; padding: 0; border: 0; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); text-align: left; cursor: pointer; overflow: hidden; transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.tier:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 1.5px var(--line-strong), 0 14px 28px -14px rgba(30,22,70,.4); }
+.tier:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--purple), var(--ring); }
+.tier-band { height: 64px; position: relative; }
+.tier[data-tone="lav"] .tier-band { background: var(--lav); }
+.tier[data-tone="lblue"] .tier-band { background: var(--lblue); }
+.tier[data-tone="purple"] .tier-band { background: var(--purple); }
+.tier-band svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .35; }
+.tier-body { padding: 1rem 1.125rem 1.25rem; }
+.tier-name { display: block; font-family: var(--f-display); font-size: 1.375rem; text-transform: uppercase; line-height: 1; color: var(--deep); }
+.tier-price { display: block; margin-top: .5rem; font-family: var(--f-logo); font-weight: 800; font-size: 1.75rem; color: var(--purple); }
+.tier-price small { font-size: .8125rem; font-weight: 700; color: var(--muted); }
+.tier-desc { display: block; margin-top: .375rem; font-size: .8125rem; line-height: 1.4; color: var(--muted); }
+.tier-check { position: absolute; top: .75rem; right: .75rem; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: var(--deep); opacity: 0; transform: scale(.6); transition: all .2s var(--ease); }
+.tier[aria-checked="true"] { box-shadow: inset 0 0 0 2.5px var(--purple), 0 18px 32px -16px rgba(89,76,159,.6); }
+.tier[aria-checked="true"] .tier-check { opacity: 1; transform: none; }
+.tiers.is-invalid .tier { box-shadow: inset 0 0 0 1.5px var(--red); }
+.tier-err { display: none; margin: -1rem 0 1.5rem; font-size: .8125rem; font-weight: 700; color: var(--red-text); }
+.tiers.is-invalid + .tier-err { display: block; }
+
+.segmented { display: inline-grid; grid-auto-flow: column; gap: 4px; padding: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.segmented button { padding: .625rem 1.125rem; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font-weight: 700; font-size: .875rem; cursor: pointer; transition: all .2s var(--ease); }
+.segmented button[aria-checked="true"] { background: var(--deep); color: #fff; }
+.segmented button:focus-visible { outline: none; box-shadow: var(--ring); }
+.fee-note { display: flex; gap: .625rem; align-items: center; margin: 1rem 0 0; font-size: .875rem; color: var(--deep); }
+.fee-note::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(239,158,50,.2); }
+
+/* ---- Review ---- */
+.review { border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.review-row { display: grid; grid-template-columns: 120px 1fr auto; gap: 1rem; align-items: start; padding: 1rem 1.25rem; border-top: 1px solid #efe8f4; font-size: .9375rem; }
+.review-row:first-child { border-top: 0; }
+.review-row dt { font-weight: 700; font-size: .8125rem; color: var(--muted); }
+.review-row dd { margin: 0; line-height: 1.45; }
+.edit { padding: 0; border: 0; background: none; color: var(--purple); font-weight: 700; font-size: .8125rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.edit:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; border-radius: 2px; }
+.total {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    padding: 1.25rem; color: #fff;
+    background: radial-gradient(circle at 100% 0, rgba(160,216,231,.25), rgba(160,216,231,0) 50%), linear-gradient(120deg, var(--deep), var(--deep-2) 60%, var(--purple));
+}
+.total span { font-size: .875rem; color: var(--lav); }
+.total small { display: block; margin-top: .125rem; font-size: .75rem; }
+.total strong { font-family: var(--f-logo); font-weight: 800; font-size: 2rem; line-height: 1; color: var(--lblue); }
+
+.card-block { margin-top: 1.5rem; padding: 1.25rem; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.card-block h3 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 1rem; font-family: var(--f-display); font-weight: 400; font-size: 1.25rem; text-transform: uppercase; color: var(--purple); }
+.card-block h3 small { display: inline-flex; align-items: center; gap: .3rem; font-family: var(--f-body); font-size: .75rem; text-transform: none; color: var(--muted); }
+.card-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: .75rem; }
+.card-row .field { margin: 0; }
+.card-err { display: none; margin-top: .75rem; font-size: .8125rem; font-weight: 700; color: var(--red-text); }
+.card-block.is-invalid .card-err { display: block; }
+.card-block.is-invalid #cc .input { border-bottom-color: var(--red); }
+
+.captcha { display: flex; align-items: center; justify-content: space-between; width: 304px; max-width: 100%; height: 78px; margin: 1.5rem 0 0; padding: 0 .75rem 0 .875rem; border: 1px solid #d3d3d3; border-radius: 3px; background: #f9f9f9; box-shadow: 0 0 4px rgba(0,0,0,.08); font-family: Roboto, Arial, sans-serif; font-size: 14px; color: #282828; }
+.captcha label { display: flex; align-items: center; gap: .75rem; cursor: pointer; }
+.captcha input { width: 26px; height: 26px; margin: 0; accent-color: #1a73e8; }
+.captcha small { font-size: 10px; color: #555; text-align: center; line-height: 1.2; }
+.captcha.is-invalid { border-color: var(--red); box-shadow: 0 0 0 3px rgba(240,76,64,.15); }
+.disclaimer { margin: 1rem 0 0; font-size: .8125rem; color: var(--muted); }
+.disclaimer b { color: var(--red); }
+
+/* ---- Nav buttons ---- */
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 640px; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #e9e1f0; }
+.btn-back { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1rem; border: 0; border-radius: 999px; background: transparent; color: var(--purple); font-weight: 700; cursor: pointer; }
+.btn-back:hover { background: #efe7f4; }
+.btn-back:focus-visible { outline: none; box-shadow: var(--ring); }
+.btn-back[hidden] { display: inline-flex; visibility: hidden; }
+.btn-go {
+    display: inline-flex; align-items: center; gap: 1rem; min-height: 3.5rem; padding: .375rem .375rem .375rem 1.75rem;
+    border: 0; border-radius: 999px; background: var(--purple); color: #fff;
+    font-family: var(--f-logo); font-weight: 800; font-size: 1.0625rem; cursor: pointer;
+    box-shadow: 0 14px 28px -12px rgba(89,76,159,.75);
+    transition: background-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.btn-go .arrow { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; background: var(--lblue); color: var(--deep); transition: transform .2s var(--ease); }
+.btn-go:hover { background: var(--deep); }
+.btn-go:hover .arrow { transform: translateX(3px); }
+.btn-go:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--lblue); }
+.btn-go.is-pay { background: var(--deep); }
+.btn-go.is-pay:hover { background: var(--purple); }
+
+/* ---- Done ---- */
+.done { text-align: left; }
+.done-badge { position: relative; width: 132px; height: 132px; margin-bottom: 1.75rem; }
+.done-badge svg { width: 100%; height: 100%; }
+.done-badge .ring { stroke-dasharray: 380; stroke-dashoffset: 380; animation: draw 1s .1s var(--ease) forwards; }
+.done-badge .tick { stroke-dasharray: 60; stroke-dashoffset: 60; animation: draw .5s .8s var(--ease) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.next { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 2rem; }
+.next div { padding: 1rem; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-size: .875rem; line-height: 1.4; }
+.next b { display: block; margin-bottom: .25rem; font-family: var(--f-logo); color: var(--purple); }
+
+/* ---------- Responsive ---------- */
+@container (max-width: 1023px) {
+    .app { grid-template-columns: 1fr; }
+    .rail { position: relative; top: 0; height: auto; min-height: 0; padding: 1.5rem 1.5rem 1.75rem; }
+    .headline { margin-top: 2rem; padding-top: 0; font-size: 3rem; }
+    .rail-lede { font-size: .9375rem; }
+    .steps { display: flex; gap: .375rem; margin-top: 1.5rem; }
+    .steps li { padding: 0; }
+    .steps li + li::before { display: none; }
+    .steps .label { display: none; }
+    .rail-foot { display: none; }
+    .pane { padding: 2rem 1.5rem 2.5rem; }
+}
+@container (max-width: 640px) {
+    .headline { font-size: 2.5rem; }
+    .step-title { font-size: 2.25rem; }
+    .grid { grid-template-columns: 1fr; }
+    .grid-addr { grid-template-columns: 1fr 1fr; }
+    .grid-addr .city { grid-column: 1 / -1; }
+    .tiers { grid-template-columns: 1fr; }
+    .tier { flex-direction: row; }
+    .tier-band { width: 14px; height: auto; flex: none; }
+    .tier-band svg { display: none; }
+    .segmented { display: grid; grid-auto-flow: row; width: 100%; border-radius: 16px; }
+    .segmented button { border-radius: 12px; }
+    .review-row { grid-template-columns: 1fr auto; }
+    .review-row dt { grid-column: 1 / -1; }
+    .card-row { grid-template-columns: 1fr 1fr; }
+    .card-row .field:first-child { grid-column: 1 / -1; }
+    .next { grid-template-columns: 1fr; }
+    .btn-go { padding-left: 1.25rem; font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .done-badge .ring, .done-badge .tick { stroke-dashoffset: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="review-bar" role="toolbar" aria-label="Preview controls">
+    <strong>DMA Membership · Concept B "Gallery Rail"</strong>
+    <button class="review-btn" id="b-desk" aria-pressed="true">Desktop</button>
+    <button class="review-btn" id="b-mob" aria-pressed="false">Mobile</button>
+    <button class="review-btn" id="b-reset">Restart</button>
+</div>
+
+<main class="stage" id="stage">
+<div class="frame">
+<div class="app">
+
+    <!-- ===== Brand rail ===== -->
+    <aside class="rail">
+        <!-- Cast-iron gallery lattice (Downtown Mobile balconies), drawn as an original geometric pattern -->
+        <svg class="rail-lattice" aria-hidden="true">
+            <defs>
+                <pattern id="iron" width="56" height="56" patternUnits="userSpaceOnUse">
+                    <g fill="none" stroke="#ddcbe4" stroke-width="1.2" opacity=".5">
+                        <circle cx="0" cy="0" r="28"/><circle cx="56" cy="0" r="28"/><circle cx="0" cy="56" r="28"/><circle cx="56" cy="56" r="28"/>
+                        <circle cx="28" cy="28" r="10"/>
+                    </g>
+                    <circle cx="28" cy="28" r="2.4" fill="#a0d8e7" opacity=".7"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#iron)"/>
+        </svg>
+
+        <div class="rail-top">
+            <a class="wordmark" href="#">Downtown Mobile<small>Alliance</small></a>
+            <span class="ph">Logo placeholder</span>
+        </div>
+
+        <h1 class="headline"><span>Your</span><span class="l2">Business</span><span class="l3">Belongs</span><span>Downtown.</span></h1>
+        <p class="rail-lede">Join the Alliance and help keep downtown Mobile clean, safe and full of life.</p>
+
+        <ol class="steps" id="steps">
+            <li class="is-current"><button data-go="1"><span class="dot">1</span></button><span class="label">Your business</span></li>
+            <li><button data-go="2"><span class="dot">2</span></button><span class="label">Location</span></li>
+            <li><button data-go="3"><span class="dot">3</span></button><span class="label">About you</span></li>
+            <li><button data-go="4"><span class="dot">4</span></button><span class="label">Membership</span></li>
+            <li><button data-go="5"><span class="dot">5</span></button><span class="label">Review &amp; pay</span></li>
+        </ol>
+
+        <div class="rail-foot">
+            <span>Questions about downtown?<b>BID Hotline 251-327-SAFE</b></span>
+            <nav class="social" aria-label="Social media">
+                <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.8 0-4 1.7-4 4.2V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/></svg></a>
+                <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+                <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12c0 1.6.2 3.2.5 4.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1c.3-1.6.5-3.2.5-4.8s-.2-3.2-.5-4.8zM9.8 15V9l5.8 3-5.8 3z"/></svg></a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- ===== Form pane ===== -->
+    <section class="pane" aria-live="polite">
+        <div class="progress" id="progress"><span id="p-label">Step 1 of 5</span><div class="progress-track"><div class="progress-fill" id="p-fill"></div></div></div>
+
+        <form id="f" novalidate>
+
+        <!-- Step 1 -->
+        <div class="step is-active" data-step="1">
+            <p class="kicker">Let's start with the basics</p>
+            <h2 class="step-title">Your business</h2>
+            <p class="step-lede">Tell us who you are and the best person to reach about your membership.</p>
+            <div class="grid">
+                <div class="field span"><label for="biz">Business name<span class="req">*</span></label><input class="input" id="biz" data-req value="Dauphin Street Coffee Co."><div class="err">Enter your business name.</div></div>
+                <div class="field"><label for="fn">Contact first name<span class="req">*</span></label><input class="input" id="fn" data-req value="Jordan"><div class="err">Enter a first name.</div></div>
+                <div class="field"><label for="ln">Contact last name<span class="req">*</span></label><input class="input" id="ln" data-req value="Ellis"><div class="err">Enter a last name.</div></div>
+                <div class="field"><label for="em">Email<span class="req">*</span></label><input class="input" id="em" type="email" data-req placeholder="name@business.com"><div class="err">Enter an email address.</div></div>
+                <div class="field"><label for="ph">Phone<span class="req">*</span></label><input class="input" id="ph" data-req placeholder="(251) 555-0123"><div class="err">Enter a phone number.</div></div>
+                <div class="field"><label for="ti">Title<span class="req">*</span></label><input class="input" id="ti" data-req value="Owner"><div class="err">Enter a title.</div></div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step" data-step="2">
+            <p class="kicker">Where you are</p>
+            <h2 class="step-title">Location</h2>
+            <p class="step-lede">Your downtown address, and where we should send invoices and member mail.</p>
+            <div class="field"><label for="pa1">Street address<span class="req">*</span></label><input class="input" id="pa1" data-req value="200 Dauphin St"><div class="err">Enter a street address.</div></div>
+            <div class="field"><label for="pa2">Address line 2<span class="opt">Optional</span></label><input class="input" id="pa2" placeholder="Suite, unit"></div>
+            <div class="grid-addr">
+                <div class="field city"><label for="pc">City<span class="req">*</span></label><input class="input" id="pc" data-req value="Mobile"><div class="err">Enter a city.</div></div>
+                <div class="field"><label for="ps">State<span class="req">*</span></label><input class="input" id="ps" data-req value="AL"><div class="err">Enter a state.</div></div>
+                <div class="field"><label for="pz">Zip<span class="req">*</span></label><input class="input" id="pz" data-req value="36602"><div class="err">Enter a zip.</div></div>
+            </div>
+            <h3 class="sub">Mailing address</h3>
+            <label class="switch"><input type="checkbox" id="same" checked><span class="track" aria-hidden="true"></span>Same as street address</label>
+            <div class="mail-block is-same" id="mail">
+                <div class="field"><label for="ma1">Mailing address<span class="req">*</span></label><input class="input" id="ma1" data-req><div class="err">Enter a mailing address.</div></div>
+                <div class="grid-addr">
+                    <div class="field city"><label for="mc">City<span class="req">*</span></label><input class="input" id="mc" data-req><div class="err">Enter a city.</div></div>
+                    <div class="field"><label for="ms">State<span class="req">*</span></label><input class="input" id="ms" data-req><div class="err">Enter a state.</div></div>
+                    <div class="field"><label for="mz">Zip<span class="req">*</span></label><input class="input" id="mz" data-req><div class="err">Enter a zip.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step" data-step="3">
+            <p class="kicker">A little more</p>
+            <h2 class="step-title">About you</h2>
+            <p class="step-lede">Help us get to know your business so we can connect you with the right programs.</p>
+            <div class="grid">
+                <div class="field"><label for="cat">Business category<span class="req">*</span></label>
+                    <select class="select" id="cat" data-req><option value="">Choose one</option><option selected>Restaurant / Dining</option><option>Retail</option><option>Professional Services</option><option>Arts &amp; Culture</option></select><div class="err">Choose a category.</div></div>
+                <div class="field"><label for="emp">Number of employees<span class="req">*</span></label><input class="input" id="emp" data-req value="12"><div class="err">Enter a number.</div></div>
+                <div class="field span"><label for="web">Website<span class="opt">Optional</span></label><input class="input" id="web" placeholder="https://"></div>
+                <div class="field"><label for="staff">DMA staff member<span class="req">*</span></label><input class="input" id="staff" data-req><div class="err">Enter the staff member's name.</div>
+                    <p class="help">The DMA staff member who helped you with this application.</p></div>
+                <div class="field"><label for="oc">Other important contacts<span class="opt">Optional</span></label><input class="input" id="oc" placeholder="Name, role, email"></div>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step" data-step="4">
+            <p class="kicker">Choose your level</p>
+            <h2 class="step-title">Membership</h2>
+            <p class="step-lede">Every level supports events, business development and clean, safe streets downtown.</p>
+            <div class="tiers" role="radiogroup" aria-label="Membership level" id="tiers">
+                <button type="button" class="tier" role="radio" aria-checked="false" data-tone="lav" data-name="Supporter" data-amt="100">
+                    <span class="tier-band"><svg aria-hidden="true"><rect width="100%" height="100%" fill="url(#iron)"/></svg></span>
+                    <span class="tier-body"><span class="tier-name">Supporter</span><span class="tier-price">$100<small> / yr</small></span><span class="tier-desc">Individuals and sole proprietors.</span></span>
+                    <span class="tier-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5 9-10"/></svg></span>
+                </button>
+                <button type="button" class="tier" role="radio" aria-checked="true" data-tone="lblue" data-name="Business" data-amt="250">
+                    <span class="tier-band"><svg aria-hidden="true"><rect width="100%" height="100%" fill="url(#iron)"/></svg></span>
+                    <span class="tier-body"><span class="tier-name">Business</span><span class="tier-price">$250<small> / yr</small></span><span class="tier-desc">Shops, restaurants and offices.</span></span>
+                    <span class="tier-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5 9-10"/></svg></span>
+                </button>
+                <button type="button" class="tier" role="radio" aria-checked="false" data-tone="purple" data-name="Corporate" data-amt="500">
+                    <span class="tier-band"><svg aria-hidden="true"><rect width="100%" height="100%" fill="url(#iron)"/></svg></span>
+                    <span class="tier-body"><span class="tier-name">Corporate</span><span class="tier-price">$500<small> / yr</small></span><span class="tier-desc">Larger employers and anchors.</span></span>
+                    <span class="tier-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5 9-10"/></svg></span>
+                </button>
+            </div>
+            <p class="tier-err">Choose a membership level.</p>
+
+            <h3 class="sub" style="margin-top:0">How would you like to pay?</h3>
+            <div class="segmented" role="radiogroup" aria-label="Payment type" id="pay">
+                <button type="button" role="radio" aria-checked="true" data-v="Credit Card">Credit card</button>
+                <button type="button" role="radio" aria-checked="false" data-v="Will Pay By Check">Pay by check</button>
+                <button type="button" role="radio" aria-checked="false" data-v="Please Invoice">Send an invoice</button>
+            </div>
+            <p class="fee-note" id="fee-note">A processing fee of 3% will be added to payments by credit card.</p>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step" data-step="5">
+            <p class="kicker">Almost there</p>
+            <h2 class="step-title">Review &amp; pay</h2>
+            <p class="step-lede">Check your details, then complete your application.</p>
+            <dl class="review" id="review"></dl>
+
+            <div class="card-block" id="cardblock">
+                <h3>Card details <small><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 9V7A5 5 0 0 0 7 7v2H5v13h14V9h-2zM9 7a3 3 0 0 1 6 0v2H9V7z"/></svg>Secured by Stripe</small></h3>
+                <div class="card-row">
+                    <div class="field" id="cc"><label for="ccn">Card number</label><input class="input" id="ccn" inputmode="numeric" placeholder="1234 1234 1234 1234"></div>
+                    <div class="field"><label for="cce">Expiry</label><input class="input" id="cce" placeholder="MM / YY"></div>
+                    <div class="field"><label for="ccc">CVC</label><input class="input" id="ccc" placeholder="CVC"></div>
+                </div>
+                <p class="card-err">Your card number is incomplete.</p>
+            </div>
+
+            <div class="captcha" id="captcha"><label><input type="checkbox" id="cap"> I'm not a robot</label><small>reCAPTCHA<br>Privacy · Terms</small></div>
+            <p class="disclaimer"><b>*</b> This application is not valid until approval from DMA and payment is received.</p>
+        </div>
+
+        <!-- Done -->
+        <div class="step done" data-step="6">
+            <div class="done-badge" aria-hidden="true">
+                <svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="60" fill="#1e1646"/><circle class="ring" cx="66" cy="66" r="60" fill="none" stroke="#a0d8e7" stroke-width="6" transform="rotate(-90 66 66)"/><path class="tick" d="M42 68l16 16 32-34" fill="none" stroke="#ef9e32" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p class="kicker">Application received</p>
+            <h2 class="step-title">Welcome to<br>the Alliance</h2>
+            <p class="step-lede" id="done-lede">Thanks for investing in downtown Mobile. Our team will review your application and be in touch.</p>
+            <div class="next">
+                <div><b>We review</b>DMA staff confirm your application.</div>
+                <div><b>Stay connected</b>Member news and event updates.</div>
+                <div><b>Get involved</b>Events and programs downtown.</div>
+            </div>
+        </div>
+
+        </form>
+
+        <div class="nav" id="nav">
+            <button type="button" class="btn-back" id="back" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back</button>
+            <button type="button" class="btn-go" id="go"><span id="go-label">Continue</span><span class="arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+        </div>
+    </section>
+</div>
+</div>
+</main>
+
+<script>
+(function () {
+    var $ = function (s) { return document.querySelector(s); };
+    var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+    var step = 1, total = 5;
+    var state = { tier: 'Business', amt: 250, pay: 'Credit Card' };
+
+    // preview controls
+    function mode(m) { $('#stage').classList.toggle('is-mobile', m); $('#b-desk').setAttribute('aria-pressed', !m); $('#b-mob').setAttribute('aria-pressed', m); }
+    $('#b-desk').onclick = function () { mode(false); };
+    $('#b-mob').onclick = function () { mode(true); };
+    $('#b-reset').onclick = function () { $('#go').disabled = false; show(1); };
+
+    function money(v) { return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function val(id) { return ($('#' + id).value || '').trim().replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+    // same-as toggle
+    function syncMail() {
+        var same = $('#same').checked;
+        $('#mail').classList.toggle('is-same', same);
+        [['pa1','ma1'],['pc','mc'],['ps','ms'],['pz','mz']].forEach(function (p) {
+            var t = $('#' + p[1]);
+            if (same) t.value = $('#' + p[0]).value;
+            t.readOnly = same;
+        });
+    }
+    $('#same').onchange = syncMail;
+    ['pa1','pc','ps','pz'].forEach(function (id) { $('#' + id).addEventListener('input', function () { if ($('#same').checked) syncMail(); }); });
+    syncMail();
+
+    // tiers
+    $$('.tier').forEach(function (t) {
+        t.onclick = function () {
+            $$('.tier').forEach(function (x) { x.setAttribute('aria-checked', 'false'); });
+            t.setAttribute('aria-checked', 'true');
+            state.tier = t.dataset.name; state.amt = +t.dataset.amt;
+            $('#tiers').classList.remove('is-invalid');
+        };
+    });
+    // payment segmented
+    $$('#pay button').forEach(function (b) {
+        b.onclick = function () {
+            $$('#pay button').forEach(function (x) { x.setAttribute('aria-checked', 'false'); });
+            b.setAttribute('aria-checked', 'true');
+            state.pay = b.dataset.v;
+            $('#fee-note').style.visibility = state.pay === 'Credit Card' ? 'visible' : 'hidden';
+        };
+    });
+
+    function validate(n) {
+        var ok = true;
+        $$('.step[data-step="' + n + '"] [data-req]').forEach(function (el) {
+            var bad = !el.value.trim();
+            el.closest('.field').classList.toggle('is-invalid', bad);
+            if (bad && ok) { el.focus(); ok = false; }
+        });
+        if (n === 4 && !$('.tier[aria-checked="true"]')) { $('#tiers').classList.add('is-invalid'); ok = false; }
+        if (n === 5) {
+            var card = state.pay === 'Credit Card';
+            var ccBad = card && val('ccn').replace(/\s/g, '').length < 15;
+            $('#cardblock').classList.toggle('is-invalid', ccBad);
+            var capBad = !$('#cap').checked;
+            $('#captcha').classList.toggle('is-invalid', capBad);
+            ok = !ccBad && !capBad;
+        }
+        return ok;
+    }
+    document.addEventListener('input', function (e) {
+        var f = e.target.closest && e.target.closest('.field.is-invalid');
+        if (f && e.target.value.trim()) f.classList.remove('is-invalid');
+    });
+
+    function buildReview() {
+        var card = state.pay === 'Credit Card';
+        var fee = card ? state.amt * 0.03 : 0;
+        var addr = val('pa1') + (val('pa2') ? ', ' + val('pa2') : '') + '<br>' + val('pc') + ', ' + val('ps') + ' ' + val('pz');
+        var rows = [
+            ['Business', val('biz') + '<br>' + val('fn') + ' ' + val('ln') + ' · ' + (val('em') || '—'), 1],
+            ['Location', addr, 2],
+            ['Category', val('cat') + ' · ' + val('emp') + ' employees', 3],
+            ['Membership', state.tier + ' · ' + state.pay, 4]
+        ];
+        var html = rows.map(function (r) {
+            return '<div class="review-row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd><button type="button" class="edit" data-go="' + r[2] + '">Edit</button></div>';
+        }).join('');
+        html += '<div class="total"><span>' + (card ? 'Total today' : 'Total due') + '<small>' + money(state.amt) + (card ? ' + ' + money(fee) + ' card fee' : '') + '</small></span><strong>' + money(state.amt + fee) + '</strong></div>';
+        $('#review').innerHTML = html;
+        $('#cardblock').hidden = !card;
+        $$('#review .edit').forEach(function (b) { b.onclick = function () { show(+b.dataset.go); }; });
+    }
+
+    function show(n) {
+        step = n;
+        $$('.step').forEach(function (s) { s.classList.toggle('is-active', +s.dataset.step === n); });
+        $$('#steps li').forEach(function (li, i) {
+            li.classList.toggle('is-current', i + 1 === n);
+            li.classList.toggle('is-done', i + 1 < n);
+        });
+        var done = n > total;
+        $('#p-label').textContent = done ? 'Complete' : 'Step ' + n + ' of ' + total;
+        $('#p-fill').style.width = (done ? 100 : n / total * 100) + '%';
+        $('#back').hidden = n === 1 || done;
+        $('#nav').style.display = done ? 'none' : '';
+        var go = $('#go');
+        go.classList.toggle('is-pay', n === total);
+        $('#go-label').textContent = n < total ? 'Continue' : (state.pay === 'Credit Card' ? 'Pay ' + money(state.amt * 1.03) : 'Submit application');
+        if (n === total) buildReview();
+        var pane = $('.pane');
+        if (pane.getBoundingClientRect().top < 0) pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    $('#go').onclick = function () {
+        if (!validate(step)) return;
+        show(step + 1);
+    };
+    $('#back').onclick = function () { show(step - 1); };
+    $$('#steps button').forEach(function (b) {
+        b.onclick = function () { var t = +b.dataset.go; if (t <= step || validate(step)) show(t); };
+    });
+})();
+</script>
+</body>
+</html>

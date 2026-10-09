@@ -1,0 +1,214 @@
+/* ==========================================================================
+   DMA brand stylesheet — shared tokens + components
+   Collected from: v1-classic.html, v2-hero.html, concept-b-gallery-rail.html
+   Source: DMA Brand Guidelines 2026 (BID-26-15) + downtownmobile.org
+   ========================================================================== */
+
+/* 1. Tokens ---------------------------------------------------------------- */
+:root {
+    /* Primary (lead) */
+    --dma-deep-blue: #1e1646;
+    --dma-purple: #594c9f;
+    /* Primary (support) */
+    --dma-light-blue: #a0d8e7;
+    --dma-lavender: #ddcbe4;
+    /* Secondary (accent only) */
+    --dma-teal: #275e71;
+    --dma-red: #f04c40;
+    --dma-gold: #ef9e32;
+
+    /* UI derivatives (need brand sign-off) */
+    --dma-deep-2: #2a1f5c;
+    --dma-canvas: #f5f1f8;
+    --dma-field-bg: #fcfbfd;
+    --dma-border: #d9d0e4;
+    --dma-border-hover: #b9acd0;
+    --dma-muted: #6f6894;
+    --dma-red-50: #fdeeed;
+    --dma-red-text: #c2372d;
+    --dma-white: #ffffff;
+
+    /* Type */
+    --dma-font-display: "Grako", "Oswald", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --dma-font-logo: "Visby CF", "Helvetica Neue", Arial, sans-serif;
+    --dma-font-body: "DIN 2014", "DIN Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    /* Shape + motion */
+    --dma-radius: 8px;
+    --dma-radius-lg: 18px;
+    --dma-shadow: 0 30px 60px -20px rgba(30, 22, 70, .35), 0 10px 20px -10px rgba(30, 22, 70, .15);
+    --dma-focus-ring: 0 0 0 4px rgba(89, 76, 159, .22);
+    --dma-ease: cubic-bezier(.2, .7, .2, 1);
+    --dma-pattern: repeating-linear-gradient(135deg, rgba(221, 203, 228, .06) 0 2px, transparent 2px 22px);
+}
+
+/* 2. Base ------------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    background: var(--dma-canvas);
+    color: var(--dma-deep-blue);
+    font-family: var(--dma-font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; }
+a { color: var(--dma-purple); }
+.dma-container { max-width: 1160px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* 3. Hero (v2 hero + Concept B lattice) ------------------------------------ */
+.dma-hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: 3.5rem 0 8rem;
+    background:
+        radial-gradient(circle at 88% 12%, rgba(160, 216, 231, .22) 0, rgba(160, 216, 231, 0) 38%),
+        radial-gradient(circle at 8% 100%, rgba(89, 76, 159, .75) 0, rgba(89, 76, 159, 0) 55%),
+        var(--dma-deep-blue);
+    color: var(--dma-white);
+}
+.dma-lattice { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; opacity: .45; }
+.dma-topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 3rem; }
+.dma-wordmark { font-family: var(--dma-font-logo); font-weight: 800; font-size: 1.125rem; line-height: 1.02; color: var(--dma-white); text-decoration: none; }
+.dma-wordmark small { display: block; font-size: .75rem; color: var(--dma-light-blue); }
+.dma-tag { padding: .25rem .625rem; border: 1px dashed rgba(221, 203, 228, .5); border-radius: 999px; font-size: .75rem; color: var(--dma-lavender); }
+
+.dma-eyebrow { margin: 0 0 .75rem; font-family: var(--dma-font-logo); font-weight: 800; font-size: 1rem; color: var(--dma-light-blue); }
+.dma-title {
+    margin: 0;
+    font-family: var(--dma-font-display);
+    font-weight: 400;
+    font-size: clamp(2.75rem, 6vw, 4.75rem);
+    line-height: .92;
+    text-transform: uppercase;
+}
+.dma-title .accent { color: var(--dma-light-blue); }
+.dma-title .outline { -webkit-text-stroke: 1.5px var(--dma-lavender); color: transparent; }
+.dma-lede { max-width: 36rem; margin: 1.25rem 0 0; font-size: 1.0625rem; line-height: 1.55; color: rgba(255, 255, 255, .86); }
+
+/* Brand accent bar: Lavender / Light Blue / Gold */
+.dma-bar { display: flex; width: 168px; height: 6px; margin-top: 1.5rem; border-radius: 3px; overflow: hidden; }
+.dma-bar span { flex: 1; }
+.dma-bar span:nth-child(1) { background: var(--dma-lavender); }
+.dma-bar span:nth-child(2) { background: var(--dma-light-blue); }
+.dma-bar span:nth-child(3) { background: var(--dma-gold); }
+
+/* 4. Section heading (numbered, from v2/v3) -------------------------------- */
+.dma-section-head { display: flex; align-items: center; gap: .875rem; margin: 0 0 1.5rem; }
+.dma-section-head::after { content: ""; flex: 1; height: 2px; background: linear-gradient(90deg, var(--dma-lavender), rgba(221, 203, 228, 0)); }
+.dma-step {
+    flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 2.25rem; height: 2.25rem; border-radius: 50%;
+    background: var(--dma-light-blue); color: var(--dma-deep-blue);
+    font-family: var(--dma-font-logo); font-weight: 800;
+}
+.dma-section-title { margin: 0; font-family: var(--dma-font-display); font-weight: 400; font-size: 1.625rem; line-height: 1.1; text-transform: uppercase; color: var(--dma-purple); }
+
+/* 5. Concept cards (tier-card pattern from Concept B) ---------------------- */
+.dma-cards { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: -5.5rem; }
+.dma-concept {
+    position: relative; display: flex; flex-direction: column;
+    overflow: hidden; border-radius: 16px;
+    background: var(--dma-white); box-shadow: var(--dma-shadow);
+    transition: transform .2s var(--dma-ease), box-shadow .2s var(--dma-ease);
+}
+.dma-concept:hover { transform: translateY(-4px); }
+.dma-concept.is-active { box-shadow: inset 0 0 0 2.5px var(--dma-purple), var(--dma-shadow); }
+.dma-concept-band { position: relative; height: 120px; overflow: hidden; }
+.dma-concept[data-tone="lav"] .dma-concept-band { background: var(--dma-lavender); }
+.dma-concept[data-tone="lblue"] .dma-concept-band { background: var(--dma-light-blue); }
+.dma-concept[data-tone="deep"] .dma-concept-band { background: var(--dma-deep-blue); }
+.dma-concept-band svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .45; }
+.dma-concept-num {
+    position: absolute; left: 1.25rem; bottom: -.4rem;
+    font-family: var(--dma-font-display); font-size: 5rem; line-height: 1; color: var(--dma-deep-blue);
+}
+.dma-concept[data-tone="deep"] .dma-concept-num { color: var(--dma-light-blue); }
+.dma-concept-badge {
+    position: absolute; top: 1rem; right: 1rem; padding: .25rem .625rem; border-radius: 999px;
+    background: var(--dma-gold); color: var(--dma-deep-blue); font-size: .75rem; font-weight: 700;
+}
+.dma-concept-body { display: flex; flex: 1; flex-direction: column; padding: 1.25rem 1.375rem 1.375rem; }
+.dma-concept-name { margin: 0; font-family: var(--dma-font-display); font-weight: 400; font-size: 1.5rem; line-height: 1; text-transform: uppercase; }
+.dma-concept-desc { margin: .5rem 0 1rem; font-size: .9375rem; color: var(--dma-muted); }
+.dma-chips { display: flex; flex-wrap: wrap; gap: .375rem; margin: 0 0 1.25rem; padding: 0; list-style: none; }
+.dma-chips li { padding: .25rem .625rem; border-radius: 999px; background: var(--dma-canvas); font-size: .75rem; font-weight: 700; color: var(--dma-purple); }
+.dma-concept-actions { display: flex; align-items: center; gap: .75rem; margin-top: auto; }
+
+/* 6. Buttons (site pill + arrow disc) -------------------------------------- */
+.dma-btn {
+    display: inline-flex; align-items: center; justify-content: space-between; gap: .875rem;
+    min-height: 3rem; padding: .3rem .3rem .3rem 1.25rem;
+    border: 0; border-radius: 999px;
+    background: var(--dma-purple); color: var(--dma-white);
+    font-family: var(--dma-font-logo); font-weight: 800; font-size: .9375rem;
+    text-decoration: none; cursor: pointer;
+    box-shadow: 0 12px 24px -12px rgba(89, 76, 159, .75);
+    transition: background-color .2s var(--dma-ease);
+}
+.dma-btn-arrow {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.375rem; height: 2.375rem; border-radius: 50%;
+    background: var(--dma-light-blue); color: var(--dma-deep-blue);
+    transition: transform .2s var(--dma-ease);
+}
+.dma-btn:hover { background: var(--dma-deep-blue); }
+.dma-btn:hover .dma-btn-arrow { transform: translateX(3px); }
+.dma-btn:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--dma-light-blue); }
+.dma-link { font-weight: 700; font-size: .875rem; color: var(--dma-purple); text-underline-offset: 3px; }
+.dma-link:focus-visible { outline: 2px solid var(--dma-purple); outline-offset: 2px; border-radius: 2px; }
+
+/* 7. Viewer (tabs + framed preview) ---------------------------------------- */
+.dma-viewer { padding: 4rem 0 2rem; }
+.dma-viewer-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.dma-segmented { display: inline-grid; grid-auto-flow: column; gap: 4px; padding: 4px; border-radius: 999px; background: var(--dma-white); box-shadow: inset 0 0 0 1px var(--dma-border); }
+.dma-segmented button { padding: .55rem 1rem; border: 0; border-radius: 999px; background: transparent; color: var(--dma-muted); font-weight: 700; font-size: .875rem; cursor: pointer; transition: all .2s var(--dma-ease); }
+.dma-segmented button[aria-selected="true"], .dma-segmented button[aria-pressed="true"] { background: var(--dma-deep-blue); color: var(--dma-white); }
+.dma-segmented button:focus-visible { outline: none; box-shadow: var(--dma-focus-ring); }
+.dma-frame {
+    margin: 0 auto; overflow: hidden;
+    border-radius: var(--dma-radius-lg); background: var(--dma-white);
+    box-shadow: var(--dma-shadow); transition: max-width .3s var(--dma-ease);
+}
+.dma-frame.is-mobile { max-width: 410px; border: 10px solid var(--dma-deep-blue); border-radius: 36px; }
+.dma-frame-chrome { display: flex; align-items: center; gap: .5rem; padding: .625rem 1rem; background: var(--dma-deep-blue); color: var(--dma-lavender); font-size: .75rem; }
+.dma-frame-chrome i { width: 10px; height: 10px; border-radius: 50%; background: rgba(221, 203, 228, .35); }
+.dma-frame-chrome span { margin-left: .5rem; }
+.dma-frame.is-mobile .dma-frame-chrome { display: none; }
+.dma-frame iframe { display: block; width: 100%; height: 900px; border: 0; background: var(--dma-canvas); }
+.dma-frame.is-mobile iframe { height: 780px; }
+
+/* 8. Notes + footer -------------------------------------------------------- */
+.dma-note {
+    margin: 1.5rem 0 0; padding: .875rem 1rem;
+    border-left: 4px solid var(--dma-gold); border-radius: 0 var(--dma-radius) var(--dma-radius) 0;
+    background: #fdf4e8; font-size: .875rem; line-height: 1.5;
+}
+.dma-foot {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;
+    margin-top: 3rem; padding: 1.5rem 0 2.5rem; border-top: 1px solid #e9e1f0;
+    font-size: .8125rem; color: var(--dma-muted);
+}
+.dma-social { display: flex; gap: .5rem; }
+.dma-social a { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--dma-purple); color: var(--dma-white); }
+.dma-social a:hover { background: var(--dma-deep-blue); }
+.dma-social svg { width: 17px; height: 17px; }
+
+/* 9. Responsive + motion --------------------------------------------------- */
+@media (max-width: 960px) {
+    .dma-cards { grid-template-columns: 1fr; margin-top: -4.5rem; }
+    .dma-concept-band { height: 88px; }
+    .dma-concept-num { font-size: 4rem; }
+}
+@media (max-width: 600px) {
+    .dma-hero { padding: 2rem 0 6.5rem; }
+    .dma-topbar { margin-bottom: 2rem; }
+    .dma-tag { display: none; }
+    .dma-frame iframe { height: 720px; }
+    .dma-frame.is-mobile { border-width: 6px; border-radius: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
